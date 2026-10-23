@@ -130,7 +130,9 @@
     state.box.style.setProperty('--oc-note-color', OmniNotes.colors[state.note.color]);
     state.done.checked = state.note.done;
     state.box.classList.toggle('oc-note-done', state.note.done);
-    state.select.value = state.note.color;
+    for (const bubble of state.palette.children) {
+      bubble.setAttribute('aria-pressed', String(bubble.dataset.color === state.note.color));
+    }
   }
   async function mount(heading, email, thread) {
     const key = OmniNotes.key(email, thread);
@@ -152,20 +154,20 @@
     panel.id = `oc-note-panel-${token}`;
     launch.setAttribute('aria-controls', panel.id);
     const bar = create('div', 'oc-note-bar');
-    const identity = create('div', 'oc-note-identity');
-    const mark = create('span', 'oc-note-mark'); mark.append(noteIcon());
     const title = create('strong', 'oc-note-title', 'Private note');
-    const subtitle = create('span', 'oc-note-subtitle', 'A little context for this conversation');
-    const headingText = create('div', 'oc-note-heading'); headingText.append(title, subtitle);
-    identity.append(mark, headingText);
-    const status = create('span', 'oc-note-status', saved ? 'Saved in this browser' : 'Only you Â· saved in this browser');
+    const status = create('span', 'oc-note-status', saved ? 'Saved in this browser' : 'Only you · saved in this browser');
     status.setAttribute('role', 'status');
-    const select = create('select');
-    select.setAttribute('aria-label', 'Note color');
-    for (const color of Object.keys(OmniNotes.colors)) {
-      const option = create('option', '', color[0].toUpperCase() + color.slice(1));
-      option.value = color;
-      select.append(option);
+    const palette = create('div', 'oc-note-palette');
+    palette.setAttribute('role', 'group');
+    palette.setAttribute('aria-label', 'Note color');
+    for (const [color, value] of Object.entries(OmniNotes.colors)) {
+      const bubble = create('button', 'oc-note-color'); bubble.type = 'button';
+      bubble.dataset.color = color;
+      const label = color[0].toUpperCase() + color.slice(1);
+      bubble.setAttribute('aria-label', label);
+      bubble.title = label;
+      bubble.style.setProperty('--oc-bubble-color', value);
+      palette.append(bubble);
     }
     const doneLabel = create('label', 'oc-note-done-label');
     const done = create('input'); done.type = 'checkbox';
@@ -195,11 +197,15 @@
     const note = saved || { version: 1, account: email, thread: OmniNotes.normalizeThread(thread),
       subject: heading.textContent.trim().slice(0, 1000), text: '', color: 'yellow', done: false, updatedAt: Date.now() };
     textarea.value = note.text;
-    const state = { key, box, panel, launch, collapse, status, textarea, select, done, retry, cloud, note, dirty: false, revision: 0, pending: 0 };
+    const state = { key, box, panel, launch, collapse, status, textarea, palette, done, retry, cloud, note, dirty: false, revision: 0, pending: 0 };
     current = state;
     textarea.addEventListener('input', () => { state.note.text = textarea.value; changed(state); });
     textarea.addEventListener('blur', () => flush(state));
-    select.addEventListener('change', () => { state.note.color = select.value; paint(state); changed(state); });
+    palette.addEventListener('click', (event) => {
+      const bubble = event.target.closest('.oc-note-color');
+      if (!bubble || !palette.contains(bubble)) return;
+      state.note.color = bubble.dataset.color; paint(state); changed(state);
+    });
     done.addEventListener('change', () => { state.note.done = done.checked; paint(state); changed(state); });
     retry.addEventListener('click', () => { retry.hidden = true; flush(state); });
     launch.addEventListener('click', (event) => {
@@ -217,15 +223,15 @@
       paint(state); changed(state); flush(state);
       setExpanded(state, false); launch.focus();
     });
-    const actions = create('div', 'oc-note-actions'); actions.append(select, doneLabel, collapse);
+    const actions = create('div', 'oc-note-actions'); actions.append(palette, doneLabel, collapse);
     const footer = create('div', 'oc-note-footer');
     const links = create('div', 'oc-note-links'); links.append(cloud, manage, remove, retry);
     footer.append(status, links);
-    bar.append(identity, actions);
+    bar.append(title, actions);
     panel.append(bar, textarea, footer);
     box.append(panel);
-    // Gmail's subject header sits above the message list, including in split-pane mode.
-    const header = heading.closest('.ha') || heading;
+    // Use the whole conversation header, outside Gmail's narrower subject column.
+    const header = heading.closest('.byY') || heading.closest('.ha') || heading;
     header.after(box);
     placeLaunch(state, heading);
     paint(state);

@@ -1,4 +1,4 @@
-# OmniClick 2.2.3
+# OmniClick 2.2.4
 
 A toolbox of small click-saving features for Chrome, currently focused on Gmail.
 
@@ -39,7 +39,8 @@ and **In new window** controls, with a circular gray hover effect. Click it to o
 focus the editor; click again to collapse. If Gmail's toolbar is unavailable, the icon
 sits beside the subject. Existing notes open expanded automatically. The refreshed
 card supports light/dark surfaces and narrow layouts. Text saves automatically;
-you can change its color, mark it done, collapse it, or delete it. Inbox rows show
+the full-width editor has a compact header with four color bubbles, Done, and Collapse.
+You can also delete it. Inbox rows show
 a short preview when Gmail exposes the thread identifier. **All notes** opens search,
 account/status filters and JSON backup export/import. The popup has the same shortcut.
 Disabling notes removes the editor and previews without deleting saved notes.
