@@ -20,15 +20,22 @@
 .oc-note .oc-note-links { display: flex; align-items: center; flex-wrap: wrap; gap: 2px; }
 .oc-note .oc-note-links button { font-size: 11px; }
 .oc-note .oc-note-delete:hover { color: #b3261e; background: #fce8e6; }
-.oc-note .oc-note-launch { display: inline-flex; align-items: center; gap: 8px; padding: 8px 13px; border: 1px solid var(--oc-line); border-radius: 999px; background: var(--oc-surface); color: var(--oc-muted); font-size: 12px; font-weight: 500; box-shadow: 0 1px 3px #23324b05; }
-.oc-note .oc-note-launch:hover { background: color-mix(in srgb, var(--oc-note-color) 20%, var(--oc-surface)); border-color: #c6cedb; color: var(--oc-text); }
-.oc-note.oc-note-collapsed { margin: 8px 0 12px; }
+.oc-note-launch { position: relative; display: inline-flex; align-items: center; justify-content: center; flex: none; vertical-align: middle; box-sizing: border-box; width: 40px; height: 40px; margin: 0; padding: 10px; border: 0; border-radius: 50%; background: transparent; color: #444746; cursor: pointer; box-shadow: none; appearance: none; }
+.oc-note-launch::before { content: ""; position: absolute; inset: 0; border-radius: 50%; background: currentColor; opacity: 0; transition: opacity .12s ease; pointer-events: none; }
+.oc-note-launch:hover::before { opacity: .08; }
+.oc-note-launch:active::before { opacity: .16; }
+.oc-note-launch:focus-visible { outline: 2px solid #1a73e8; outline-offset: -3px; }
+.oc-note-launch:focus-visible::before { opacity: .12; }
+.oc-note-launch svg { position: relative; width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; pointer-events: none; }
+.oc-note-launch.oc-note-fallback { float: right; margin-inline-start: 8px; }
+.oc-note[hidden] { display: none !important; }
 .oc-note [hidden] { display: none !important; }
 .oc-note input[type=checkbox] { accent-color: #1967d2; width: 14px; height: 14px; margin: 0 5px 0 0; }
 .oc-note .oc-note-done-label { display: inline-flex; align-items: center; color: var(--oc-muted); font-size: 12px; white-space: nowrap; cursor: pointer; }
 .oc-note-done .oc-note-title { text-decoration: line-through; color: var(--oc-muted); }
 .oc-note :focus-visible { outline: 2px solid #1967d2; outline-offset: 3px; }
 .oc-note-preview { display: inline-block; max-width: 260px; overflow: hidden; text-overflow: ellipsis; vertical-align: middle; white-space: nowrap; margin-left: 8px; padding: 1px 6px; border-radius: 5px; color: #202124; font: 12px/1.5 Arial, sans-serif; }
-@media print { .oc-note, .oc-note-preview { display: none !important; } }
+@media print { .oc-note, .oc-note-launch, .oc-note-preview { display: none !important; } }
 @media (prefers-color-scheme: dark) { .oc-note { --oc-surface: #252a34; --oc-text: #e4e9f3; --oc-muted: #a8b2c6; --oc-line: #3b4352; } }
-@media (prefers-reduced-motion: reduce) { .oc-note button, .oc-note select, .oc-note a, .oc-note textarea { transition: none; } }
+@media (prefers-color-scheme: dark) { .oc-note-launch { color: #c4c7c5; } }
+@media (prefers-reduced-motion: reduce) { .oc-note button, .oc-note select, .oc-note a, .oc-note textarea, .oc-note-launch::before { transition: none; } }

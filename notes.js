@@ -55,14 +55,40 @@
   function setExpanded(state, expanded, focus = false) {
     state.expanded = expanded;
     state.panel.hidden = !expanded;
-    state.launch.hidden = expanded;
+    state.box.hidden = !expanded;
     state.box.classList.toggle('oc-note-collapsed', !expanded);
     state.launch.setAttribute('aria-expanded', String(expanded));
     state.collapse.setAttribute('aria-expanded', String(expanded));
-    const label = state.note.text.trim() ? 'Notes' : 'Add note';
-    if (state.launchLabel.textContent !== label) state.launchLabel.textContent = label;
-    state.launch.title = state.note.text.trim() ? state.note.text.slice(0, 160) : 'Add a private note to this conversation';
+    const label = expanded ? 'Collapse note' : state.note.text.trim() ? 'Notes' : 'Add note';
+    state.launch.setAttribute('aria-label', label);
+    state.launch.title = expanded ? 'Hide private note' : state.note.text.trim() ? 'Show private note' : 'Add private note';
     if (expanded && focus) state.textarea.focus();
+  }
+  function placeLaunch(state, heading) {
+    let toolbar = null;
+    // Search from this conversation's subject outward, including split-pane Gmail.
+    // The .bHJ group is Gmail's print / pop-out toolbar and is language-independent.
+    for (let region = heading.parentElement; region && region !== document.body; region = region.parentElement) {
+      toolbar = [...region.querySelectorAll('.bHJ')].find(visible);
+      if (toolbar || region.getAttribute('role') === 'main') break;
+    }
+    const header = heading.closest('.ha') || heading.parentElement;
+    const host = toolbar || header;
+    let reference = toolbar && (toolbar.querySelector('[aria-label="Print all"], [data-tooltip="Print all"], .gK') ||
+      toolbar.querySelector('button:not(.oc-note-launch), [role="button"]'));
+    const nativeButton = reference;
+    while (reference && reference.parentElement !== host) reference = reference.parentElement;
+    // Keep the icon as a sibling of Gmail's controls, without copying their listeners.
+    if (toolbar) {
+      if (state.launch.parentElement !== host || (reference && state.launch.nextSibling !== reference)) {
+        host.insertBefore(state.launch, reference || null);
+      }
+    } else if (state.launch.parentElement !== host) host.append(state.launch);
+    state.launch.classList.toggle('oc-note-fallback', !toolbar);
+    if (nativeButton) {
+      const color = getComputedStyle(nativeButton).color;
+      if (state.launch.style.color !== color) state.launch.style.color = color;
+    }
   }
   function flush(state) {
     clearTimeout(state.saveTimer);
@@ -96,6 +122,7 @@
   function unmount() {
     if (!current) return;
     flush(current);
+    current.launch.remove();
     current.box.remove();
     current = null;
   }
@@ -107,7 +134,10 @@
   }
   async function mount(heading, email, thread) {
     const key = OmniNotes.key(email, thread);
-    if (current && current.key === key && current.box.isConnected) return;
+    if (current && current.key === key && current.box.isConnected) {
+      placeLaunch(current, heading);
+      return;
+    }
     unmount();
     const token = ++generation;
     let saved;
@@ -117,8 +147,7 @@
     const box = create('section', 'oc-note');
     box.setAttribute('aria-label', 'Private note for this email thread');
     const launch = create('button', 'oc-note-launch'); launch.type = 'button';
-    const launchLabel = create('span');
-    launch.append(noteIcon(), launchLabel);
+    launch.append(noteIcon());
     const panel = create('div', 'oc-note-panel');
     panel.id = `oc-note-panel-${token}`;
     launch.setAttribute('aria-controls', panel.id);
@@ -166,14 +195,21 @@
     const note = saved || { version: 1, account: email, thread: OmniNotes.normalizeThread(thread),
       subject: heading.textContent.trim().slice(0, 1000), text: '', color: 'yellow', done: false, updatedAt: Date.now() };
     textarea.value = note.text;
-    const state = { key, box, panel, launch, launchLabel, collapse, status, textarea, select, done, retry, cloud, note, dirty: false, revision: 0, pending: 0 };
+    const state = { key, box, panel, launch, collapse, status, textarea, select, done, retry, cloud, note, dirty: false, revision: 0, pending: 0 };
     current = state;
     textarea.addEventListener('input', () => { state.note.text = textarea.value; changed(state); });
     textarea.addEventListener('blur', () => flush(state));
     select.addEventListener('change', () => { state.note.color = select.value; paint(state); changed(state); });
     done.addEventListener('change', () => { state.note.done = done.checked; paint(state); changed(state); });
     retry.addEventListener('click', () => { retry.hidden = true; flush(state); });
-    launch.addEventListener('click', () => setExpanded(state, true, true));
+    launch.addEventListener('click', (event) => {
+      event.preventDefault(); event.stopPropagation();
+      if (state.expanded) flush(state);
+      setExpanded(state, !state.expanded, !state.expanded);
+    });
+    launch.addEventListener('keydown', (event) => {
+      if (event.key === 'Enter' || event.key === ' ') event.stopPropagation();
+    });
     collapse.addEventListener('click', () => { flush(state); setExpanded(state, false); launch.focus(); });
     remove.addEventListener('click', () => {
       if (state.note.text && !window.confirm('Delete this private note?')) return;
@@ -187,10 +223,11 @@
     footer.append(status, links);
     bar.append(identity, actions);
     panel.append(bar, textarea, footer);
-    box.append(launch, panel);
+    box.append(panel);
     // Gmail's subject header sits above the message list, including in split-pane mode.
     const header = heading.closest('.ha') || heading;
-    header.parentElement.insertBefore(box, header);
+    header.after(box);
+    placeLaunch(state, heading);
     paint(state);
     paintCloud(state);
     setExpanded(state, Boolean(note.text.trim()));

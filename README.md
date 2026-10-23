@@ -1,4 +1,4 @@
-# OmniClick 2.2.2
+# OmniClick 2.2.3
 
 A toolbox of small click-saving features for Chrome, currently focused on Gmail.
 
@@ -34,8 +34,10 @@ Google's OAuth verification or bypass user consent.
 Reload OmniClick at `chrome://extensions` (or `edge://extensions`), refresh Gmail,
 then switch on **Private Gmail notes** in OmniClick's popup. Both features use the same toggle style.
 
-Empty conversations show a compact **Add note** button above the subject. Click it to
-open and focus the editor. Existing notes open expanded automatically. The refreshed
+Empty conversations show an icon-only **Add note** button beside Gmail's **Print all**
+and **In new window** controls, with a circular gray hover effect. Click it to open and
+focus the editor; click again to collapse. If Gmail's toolbar is unavailable, the icon
+sits beside the subject. Existing notes open expanded automatically. The refreshed
 card supports light/dark surfaces and narrow layouts. Text saves automatically;
 you can change its color, mark it done, collapse it, or delete it. Inbox rows show
 a short preview when Gmail exposes the thread identifier. **All notes** opens search,
