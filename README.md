@@ -1,4 +1,4 @@
-# OmniClick 2.2.1
+# OmniClick 2.2.2
 
 A toolbox of small click-saving features for Chrome, currently focused on Gmail.
 
@@ -18,10 +18,16 @@ branch's `/docs` directory at https://wisecrunch.github.io/OmniClick/. There is 
 step, analytics script, or custom domain. Edit those files and push to `main` to update
 the site. Website publishing does not complete Google OAuth verification.
 
-The public source manifest intentionally contains no OAuth client ID or tokens. Set
-your own Chrome Extension OAuth client ID locally using the Drive setup screen or
-`configure-drive.ps1`. Never commit private keys, client secrets, tokens, note exports,
-or browser data. A public OAuth client ID is configuration, not a client secret.
+The public manifest includes OmniClick's OAuth client ID and the limited `drive.file`
+scope. A client ID is public app configuration; it is not a client secret and does not
+grant access to a Google account. Never commit private keys, client secrets, access or
+refresh tokens, note exports, or browser data.
+
+The bundled OAuth client works only with the extension ID registered for it in Google
+Cloud. Unpacked installations with a different extension ID, and forks using their own
+Google Cloud project, must configure a matching Chrome Extension OAuth client using
+the Drive setup screen or `configure-drive.ps1`. Adding the client ID does not complete
+Google's OAuth verification or bypass user consent.
 
 ## Private Gmail notes
 
@@ -48,6 +54,9 @@ The existing Gmail audio player remains independently configurable.
 
 1. In the popup choose **Google Drive sync**. The setup section shows this installation's
    extension ID and whether an OAuth client is configured.
+   The bundled client ID is already configured; if this installation's ID matches its
+   Google Cloud registration, click **Connect Google Drive** and complete consent.
+   The remaining setup steps are for configuring a different installation or your own client.
 2. In your Google Cloud project, enable Google Drive API and configure Google Auth
    Platform branding/audience. If in Testing, add your account to test users.
 3. Create a **Chrome Extension** OAuth client (formerly called Chrome App), using the
