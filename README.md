@@ -1,4 +1,4 @@
-# OmniClick 2.2.4
+# OmniClick 2.2.5
 
 A toolbox of small click-saving features for Chrome, currently focused on Gmail.
 
