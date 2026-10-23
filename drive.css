@@ -1,0 +1,14 @@
+.panel { margin: 22px 0; padding: 20px; background: light-dark(#fff, #292a2d); border: 1px solid #8885; border-radius: 12px; }
+.panel h2 { margin-top: 0; font-size: 20px; }
+summary { font-size: 18px; font-weight: bold; cursor: pointer; }
+.panel .toolbar { margin-top: 12px; align-items: center; }
+.panel input { flex: 1; min-width: 220px; }
+a { color: light-dark(#174ea6, #8ab4f8); }
+code { overflow-wrap: anywhere; }
+li { margin: 10px 0; }
+#drive-error { color: light-dark(#b3261e, #f2b8b5); }
+#history { overflow-wrap: anywhere; }
+.version { padding: 12px 0; border-top: 1px solid #8885; display: flex; align-items: center; gap: 14px; }
+.version span { flex: 1; }
+button:disabled { opacity: .5; cursor: default; }
+[hidden] { display: none !important; }

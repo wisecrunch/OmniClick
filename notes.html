@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>OmniClick — Private Gmail notes</title>
+  <link rel="stylesheet" href="notes-manager.css">
+</head>
+<body>
+  <main>
+    <h1>Private Gmail notes</h1>
+    <p>Notes save locally with optional <a href="drive.html">Google Drive sync</a>. Export a backup before removing OmniClick.</p>
+    <div class="toolbar">
+      <input id="search" type="search" placeholder="Search notes, subjects or accounts" aria-label="Search notes">
+      <select id="account" aria-label="Filter by account"><option value="">All accounts</option></select>
+      <select id="status" aria-label="Filter by status"><option value="">Any status</option><option value="open">Open</option><option value="done">Done</option></select>
+      <button id="export" type="button">Export backup</button>
+      <button id="import" type="button">Import backup</button>
+      <input id="file" type="file" accept=".json,application/json" hidden>
+    </div>
+    <p id="message" role="status"></p>
+    <div id="notes"></div>
+  </main>
+  <script src="notes-store.js"></script>
+  <script src="notes-manager.js"></script>
+</body>
+</html>

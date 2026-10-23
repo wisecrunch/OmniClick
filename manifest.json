@@ -1,0 +1,63 @@
+{
+  "manifest_version": 3,
+  "name": "OmniClick",
+  "version": "2.2.1",
+  "description": "A toolbox of small click-saving features for the web. Each feature can be turned on or off.",
+  "permissions": [
+    "storage",
+    "identity",
+    "alarms"
+  ],
+  "action": {
+    "default_title": "OmniClick",
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "48": "icons/icon48.png"
+    }
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://mail.google.com/*"
+      ],
+      "js": [
+        "ik.js"
+      ],
+      "run_at": "document_start",
+      "world": "MAIN"
+    },
+    {
+      "matches": [
+        "https://mail.google.com/*"
+      ],
+      "js": [
+        "shared.js",
+        "core.js",
+        "gsm.js",
+        "content.js",
+        "notes-store.js",
+        "notes.js"
+      ],
+      "css": [
+        "content.css",
+        "notes.css"
+      ],
+      "run_at": "document_idle"
+    }
+  ],
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "host_permissions": [
+    "https://www.googleapis.com/*"
+  ],
+  "options_page": "drive.html",
+  "minimum_chrome_version": "120",
+  "homepage_url": "https://wisecrunch.github.io/OmniClick/"
+}

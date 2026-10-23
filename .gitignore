@@ -1,0 +1,13 @@
+.env
+.env.*
+*.pem
+*.key
+client_secret*.json
+credentials*.json
+token*.json
+node_modules/
+work/
+outputs/
+*.zip
+.DS_Store
+Thumbs.db

@@ -1,0 +1,15 @@
+:root { color-scheme: light dark; font: 14px/1.5 Arial, sans-serif; }
+body { margin: 0; background: light-dark(#f6f8fc, #202124); color: light-dark(#202124, #e8eaed); }
+main { max-width: 1050px; margin: 40px auto; padding: 0 24px; }
+h1 { margin-bottom: 4px; font-size: 28px; }
+.toolbar { display: flex; flex-wrap: wrap; gap: 8px; margin: 24px 0 12px; }
+input, select, button { font: inherit; padding: 9px 12px; border: 1px solid #8888; border-radius: 7px; }
+button { cursor: pointer; }
+#search { flex: 1; min-width: 240px; }
+article { margin: 14px 0; padding: 18px; border-radius: 12px; border: 1px solid #0002; color: #202124; }
+article h2 { margin: 0 0 4px; font-size: 17px; }
+article p { white-space: pre-wrap; overflow-wrap: anywhere; }
+article .meta { font-size: 12px; }
+article a { color: #174ea6; }
+article button { margin-left: 12px; background: #ffffffb3; color: #202124; }
+:focus-visible { outline: 2px solid #1a73e8; outline-offset: 2px; }

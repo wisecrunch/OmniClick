@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>OmniClick — Google Drive sync</title>
+  <link rel="stylesheet" href="notes-manager.css">
+  <link rel="stylesheet" href="drive.css">
+</head>
+<body>
+  <main>
+    <a href="notes.html">← Private notes</a>
+    <h1>Google Drive sync</h1>
+    <p>Your notes stay available offline. Connect Google Drive to sync this mailbox across computers.</p>
+    <section class="panel">
+      <h2>Connection</h2>
+      <p id="drive-state" role="status">Checking connection…</p>
+      <p id="drive-error" role="alert"></p>
+      <div class="toolbar">
+        <button id="connect" type="button">Connect Google Drive</button>
+        <button id="sync" type="button" disabled>Sync now</button>
+        <button id="disconnect" type="button" disabled>Disconnect</button>
+        <a id="folder" target="_blank" rel="noopener" hidden>Open Drive folder</a>
+      </div>
+      <p>Only notes for the connected Google email address are synced. Notes for other mailboxes stay local.</p>
+      <p>Current JSON files live in <strong>OmniClick Notes / Notes</strong>. Earlier versions live in <strong>Backups</strong>.
+        Edits sync shortly after saving and approximately every five minutes while Chrome is running.
+        Disconnecting keeps your notes and Drive files.</p>
+    </section>
+    <details id="setup" class="panel">
+      <summary>Google sign-in setup</summary>
+      <p id="configured-client"></p>
+      <p>Extension ID: <code id="extension-id"></code> <button id="copy-id" type="button">Copy ID</button></p>
+      <ol>
+        <li>In <a href="https://console.cloud.google.com/apis/library/drive.googleapis.com" target="_blank" rel="noopener">Google Cloud</a>, enable Google Drive API in your project.</li>
+        <li>Configure Google Auth Platform branding and audience. If the app is in Testing, add your Google account as a test user.</li>
+        <li>Create an OAuth client of type <strong>Chrome Extension</strong> (formerly Chrome App), using the extension ID above as its Item ID. A Web application client will not work with this sign-in method.</li>
+        <li>In Data Access, add <code>https://www.googleapis.com/auth/drive.file</code>. No full-Drive access or client secret is needed.</li>
+        <li>Paste the client ID below and download the configured manifest. Replace <code>manifest.json</code> inside your OmniClick extension folder, then reload OmniClick at <code>chrome://extensions</code> and reopen this page.</li>
+        <li>Click <strong>Connect Google Drive</strong> and allow access to files created by OmniClick.</li>
+      </ol>
+      <label for="client-id">OAuth client ID</label>
+      <div class="toolbar"><input id="client-id" placeholder="123456789-example.apps.googleusercontent.com" autocomplete="off" spellcheck="false">
+        <button id="configure" type="button">Download configured manifest</button></div>
+      <p id="setup-message" role="status"></p>
+      <p>For another computer, use the same Google Cloud project and an OAuth client matching that installation's extension ID.
+        Unpacked extension IDs can change when the folder path changes. For one portable ID, use the same published extension or a package with a fixed public manifest key.
+        Export your notes before changing the extension ID.</p>
+      <p><a href="https://developer.chrome.com/docs/extensions/how-to/integrate/oauth" target="_blank" rel="noopener">Chrome OAuth documentation</a></p>
+    </details>
+    <section class="panel">
+      <h2>Saved versions</h2>
+      <p>Each uploaded version is backed up before the current note is updated. If edits conflict, the newest timestamp wins and both versions remain recoverable here.
+        Restore creates a fresh note version and syncs it to your other computers.</p>
+      <p>Delete notes in OmniClick to sync a deletion. Removing files directly from Drive does not delete the local notes; they can upload again.
+        Backup history is kept until you delete its files from Drive.</p>
+      <div class="toolbar"><input id="history-search" type="search" placeholder="Filter saved versions" aria-label="Filter saved versions">
+        <button id="history-load" type="button">Load saved versions</button></div>
+      <p id="history-message" role="status"></p>
+      <div id="history"></div>
+    </section>
+  </main>
+  <script src="drive.js"></script>
+</body>
+</html>
