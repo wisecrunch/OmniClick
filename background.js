@@ -1,4 +1,4 @@
-importScripts('notes-store.js', 'drive-sync.js');
+importScripts('notes-store.js', 'drive-sync.js', 'tabs-store.js');
 
 chrome.runtime.onMessage.addListener((message, sender, respond) => {
   if (sender.id !== chrome.runtime.id || !message || typeof message.type !== 'string') return;
@@ -6,7 +6,8 @@ chrome.runtime.onMessage.addListener((message, sender, respond) => {
   const isExtensionPage = sender.url?.startsWith(chrome.runtime.getURL(''));
   if (!isGmail && !isExtensionPage) return;
   let task;
-  if (message.type === 'omniclick-note-put') task = () => OmniNotes.put(message.note);
+  if (message.type === 'omniclick-tabs-update' && isGmail) task = () => OmniGmailTabsStore.update(message.account, message.operation);
+  else if (message.type === 'omniclick-note-put') task = () => OmniNotes.put(message.note);
   else if (message.type === 'omniclick-open-notes' && isGmail) task = () => chrome.tabs.create({ url: chrome.runtime.getURL('notes.html') });
   else if (message.type === 'omniclick-open-drive' && isGmail) task = () => chrome.runtime.openOptionsPage();
   else if (isExtensionPage) {

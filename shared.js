@@ -2,6 +2,13 @@
 // here, then call OmniClick.register(id, { enable, disable }) from a content script.
 const OMNICLICK_FEATURES = [
   {
+    id: 'gmail-tabs',
+    name: 'Custom Gmail tabs',
+    description: 'Pin labels and saved searches as colorful tabs. Rename, edit, and reorder them per mailbox.',
+    site: 'mail.google.com',
+    defaultEnabled: false,
+  },
+  {
     id: 'gmail-notes',
     name: 'Private Gmail notes',
     description: 'Private thread notes with autosave, colors and inbox previews. Optional Google Drive sync.',

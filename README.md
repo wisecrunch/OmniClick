@@ -1,4 +1,4 @@
-# OmniClick 2.2.5
+# OmniClick 2.3.0
 
 A toolbox of small click-saving features for Chrome, currently focused on Gmail.
 
@@ -28,6 +28,28 @@ Cloud. Unpacked installations with a different extension ID, and forks using the
 Google Cloud project, must configure a matching Chrome Extension OAuth client using
 the Drive setup screen or `configure-drive.ps1`. Adding the client ID does not complete
 Google's OAuth verification or bypass user consent.
+
+## Custom Gmail tabs
+
+Enable **Custom Gmail tabs** in the popup using the same switch as notes and audio.
+A tab bar appears above the Gmail conversation area, starting with Inbox, Unread, and
+Starred. Click **+** to add any Gmail search or exact label name, or **Save view** to
+pin the current label/search. Each tab can have a custom name, background, and text
+color. The pencil button edits its name, query, colors, or removes the tab.
+Drag tabs to reorder them, or focus a tab and press Alt+Left/Right.
+
+For a label plus its sublabels, select **Gmail label** and **Include sublabels**.
+Expand the label tree in Gmail before saving: OmniClick discovers labels from Gmail's
+loaded sidebar links, not the Gmail API. It saves those exact descendant names and
+also includes matching labels loaded later. Sublabels Gmail has not exposed cannot be
+automatically discovered. Re-save the tab after loading more labels to retain them.
+Nested-label searches use explicit OR terms rather than unsupported wildcards.
+
+Tabs and appearance are stored locally per mailbox, separately from note files, and
+are not included in note JSON exports or Drive note sync. Feature on/off settings use
+Chrome settings sync. Turning the feature off removes its bar/dialog without deleting
+tabs. It requires no new permission, cloudHQ account, or Gmail API access. It does not
+change Gmail's native category settings, move email, or run Gmail on mobile.
 
 ## Private Gmail notes
 
@@ -113,3 +135,13 @@ References:
 - https://developer.chrome.com/docs/extensions/how-to/integrate/oauth
 - https://developers.google.com/workspace/drive/api/guides/api-specific-auth
 - https://developers.google.com/workspace/drive/api/guides/manage-uploads
+
+## Validation
+
+Run `node tests/utf8.cjs`, `node tests/tabs-store.cjs`, and
+`node tests/drive-sync.cjs` for encoding, tab storage, and mocked Drive sync checks.
+The optional `node tests/gmail-tabs-browser.cjs` loads the actual unpacked extension
+in isolated headless Edge with a fictional Gmail fixture. It requires Playwright and
+Edge installed; `PLAYWRIGHT_MODULE` can point to the Playwright package if it is not
+on Node's module path. It tests toggling, editing, navigation, ordering, persistence,
+mailbox isolation, redraws, and cleanup without accessing your browser profile.

@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
   "name": "OmniClick",
-  "version": "2.2.5",
-  "description": "A toolbox of small click-saving features for the web. Each feature can be turned on or off.",
+  "version": "2.3.0",
+  "description": "Gmail tools for private notes, saved label/search tabs, and inline audio, with optional Google Drive note sync.",
   "permissions": [
     "storage",
     "identity",
@@ -37,11 +37,14 @@
         "gsm.js",
         "content.js",
         "notes-store.js",
-        "notes.js"
+        "notes.js",
+        "tabs-store.js",
+        "tabs.js"
       ],
       "css": [
         "content.css",
-        "notes.css"
+        "notes.css",
+        "tabs.css"
       ],
       "run_at": "document_idle"
     }
