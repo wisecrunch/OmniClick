@@ -21,6 +21,12 @@ const OMNICLICK_FEATURES = [
     description: 'Play .mp3 and .wav attachments (including GSM phone recordings) in Gmail without downloading.',
     site: 'mail.google.com',
   },
+  {
+    id: 'tab-recorder',
+    name: 'Tab recorder',
+    description: 'Record the current tab as a YouTube-ready video, with cursor, clicks and typing shown.',
+    site: 'Any tab',
+  },
 ];
 
 const OmniClickSettings = {

@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>OmniClick recordings</title>
+  <link rel="stylesheet" href="recordings.css">
+</head>
+<body>
+  <main>
+    <h1>Recordings</h1>
+    <p class="muted">Saved in this browser only. Download them, or upload straight to YouTube.</p>
+
+    <details id="setup">
+      <summary>YouTube setup</summary>
+      <p>Uploading uses your own Google Cloud project, so nothing goes through anyone else's server. One-time setup:</p>
+      <ol>
+        <li>In <a href="https://console.cloud.google.com/" target="_blank" rel="noopener">Google Cloud Console</a>, create a project and enable <b>YouTube Data API v3</b>.</li>
+        <li>Set up the OAuth consent screen (External) and add your Google account as a test user.</li>
+        <li>Create credentials: <b>OAuth client ID</b>, type <b>Web application</b>. Under <b>Authorized redirect URIs</b> add:
+          <div class="row"><code id="redirect"></code><button type="button" id="copyRedirect">Copy</button></div>
+        </li>
+        <li>Paste the Client ID here:
+          <div class="row"><input id="clientId" type="text" placeholder="1234-abc.apps.googleusercontent.com" spellcheck="false"><button type="button" id="saveClient">Save</button></div>
+          <div id="clientStatus" class="muted" role="status"></div>
+        </li>
+      </ol>
+      <p class="muted">Google keeps videos uploaded by unverified projects private until the project passes its API audit. You can still make them public in YouTube Studio.</p>
+    </details>
+
+    <div id="list"></div>
+    <p id="empty" class="muted" hidden>No recordings yet. Open the OmniClick popup and press Start recording.</p>
+  </main>
+  <script src="db.js"></script>
+  <script src="youtube.js"></script>
+  <script src="recordings.js"></script>
+</body>
+</html>

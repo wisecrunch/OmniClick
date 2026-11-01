@@ -1,4 +1,4 @@
-importScripts('notes-store.js', 'drive-sync.js', 'tabs-store.js');
+importScripts('notes-store.js', 'drive-sync.js', 'tabs-store.js', 'recorder-bg.js');
 
 chrome.runtime.onMessage.addListener((message, sender, respond) => {
   if (sender.id !== chrome.runtime.id || !message || typeof message.type !== 'string') return;

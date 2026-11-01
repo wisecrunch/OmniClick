@@ -1,12 +1,19 @@
 {
   "manifest_version": 3,
   "name": "OmniClick",
-  "version": "2.3.0",
-  "description": "Gmail tools for private notes, saved label/search tabs, and inline audio, with optional Google Drive note sync.",
+  "version": "2.4.0",
+  "description": "Gmail notes, saved label/search tabs and inline audio, plus a tab video recorder with YouTube upload. Optional Google Drive note sync.",
   "permissions": [
     "storage",
     "identity",
-    "alarms"
+    "alarms",
+    "tabCapture",
+    "offscreen",
+    "scripting",
+    "activeTab"
+  ],
+  "optional_host_permissions": [
+    "<all_urls>"
   ],
   "action": {
     "default_title": "OmniClick",

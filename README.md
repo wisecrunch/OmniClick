@@ -145,3 +145,11 @@ in isolated headless Edge with a fictional Gmail fixture. It requires Playwright
 Edge installed; `PLAYWRIGHT_MODULE` can point to the Playwright package if it is not
 on Node's module path. It tests toggling, editing, navigation, ordering, persistence,
 mailbox isolation, redraws, and cleanup without accessing your browser profile.
+
+## Tab recorder
+
+Enable **Tab recorder** in the popup, then press **Start recording** to record the current tab as
+MP4 (WebM if the browser can't encode MP4). The cursor, clicks, clicked links/buttons and typed keys
+(passwords masked) are drawn into the video. Recordings are kept in the browser and listed on the
+recordings page, where they can be downloaded or uploaded to YouTube using your own Google OAuth
+Web-application client ID (setup steps are on that page).

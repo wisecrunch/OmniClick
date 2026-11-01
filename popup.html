@@ -9,6 +9,15 @@
 <body>
   <h1>OmniClick</h1>
   <ul id="features"></ul>
+  <section id="rec" hidden>
+    <h2>Tab recorder</h2>
+    <label class="opt"><input type="checkbox" id="optAudio"> Record tab audio</label>
+    <label class="opt"><input type="checkbox" id="optPointer"> Show cursor and clicks</label>
+    <label class="opt"><input type="checkbox" id="optKeys"> Show typed keys (passwords are masked)</label>
+    <button id="recBtn" type="button">Start recording</button>
+    <div id="recStatus" class="hint" role="status"></div>
+    <a id="openRecs" href="#">Open recordings</a>
+  </section>
   <button id="manage-notes" type="button">Search / back up notes</button>
   <button id="drive-settings" type="button">Google Drive sync</button>
   <p class="hint">Changes apply immediately to open tabs.</p>

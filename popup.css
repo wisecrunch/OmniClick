@@ -19,3 +19,15 @@ li { display: flex; align-items: flex-start; gap: 12px; padding: 10px 0; border-
 .switch input:focus-visible + .track { outline: 2px solid var(--accent); outline-offset: 2px; }
 #manage-notes, #drive-settings { margin-top: 10px; padding: 7px 12px; border: 1px solid var(--line); border-radius: 6px; background: var(--bg); color: var(--fg); cursor: pointer; }
 .hint a { color: var(--muted); text-underline-offset: 2px; }
+
+:root { --rec: #d93025; }
+@media (prefers-color-scheme: dark) { :root { --rec: #f28b82; } }
+h2 { margin: 0 0 6px; font-size: 13px; font-weight: 500; }
+#rec { padding: 10px 0; border-top: 1px solid var(--line); }
+#rec[hidden] { display: none; }
+#rec a { color: var(--accent); }
+.opt { display: flex; align-items: center; gap: 8px; padding: 2px 0; }
+#recBtn { width: 100%; margin: 8px 0 4px; padding: 8px; border: 0; border-radius: 6px; background: var(--accent); color: #fff; font: 500 13px Roboto, Arial, sans-serif; cursor: pointer; }
+#recBtn.recording { background: var(--rec); }
+#recBtn:disabled { opacity: .6; cursor: default; }
+#recStatus.error { color: var(--rec); }

@@ -1,0 +1,32 @@
+:root { --bg: #f8f9fa; --card: #fff; --fg: #202124; --muted: #5f6368; --line: #dadce0; --accent: #1a73e8; --danger: #d93025; }
+@media (prefers-color-scheme: dark) {
+  :root { --bg: #17181a; --card: #202124; --fg: #e8eaed; --muted: #9aa0a6; --line: #3c4043; --accent: #8ab4f8; --danger: #f28b82; }
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--fg); font: 14px/1.5 Roboto, Arial, sans-serif; }
+main { max-width: 760px; margin: 0 auto; padding: 24px 16px 48px; }
+h1 { margin: 0 0 4px; font-size: 22px; font-weight: 500; }
+a { color: var(--accent); }
+.muted { color: var(--muted); font-size: 13px; }
+code { padding: 2px 6px; border-radius: 4px; background: var(--bg); border: 1px solid var(--line); font-size: 12px; word-break: break-all; }
+.row { display: flex; gap: 8px; align-items: center; margin-top: 6px; }
+.row input { flex: 1; min-width: 0; }
+input[type="text"], textarea, select { padding: 7px 9px; border: 1px solid var(--line); border-radius: 6px; background: var(--card); color: var(--fg); font: inherit; }
+textarea { width: 100%; resize: vertical; }
+button { padding: 7px 14px; border: 1px solid var(--line); border-radius: 6px; background: var(--card); color: var(--fg); font: 500 13px Roboto, Arial, sans-serif; cursor: pointer; }
+button.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+button.danger { color: var(--danger); }
+button:disabled { opacity: .6; cursor: default; }
+details#setup { margin: 16px 0; padding: 10px 14px; background: var(--card); border: 1px solid var(--line); border-radius: 8px; }
+details summary { cursor: pointer; font-weight: 500; }
+.card { margin: 16px 0; padding: 14px; background: var(--card); border: 1px solid var(--line); border-radius: 8px; }
+.card.selected { border-color: var(--accent); box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent) 30%, transparent); }
+.card video { width: 100%; max-height: 420px; border-radius: 6px; background: #000; }
+.meta { display: flex; flex-wrap: wrap; gap: 4px 16px; margin: 8px 0; color: var(--muted); font-size: 13px; }
+.actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+.yt { margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--line); }
+.yt label { display: block; margin: 8px 0 2px; font-size: 12px; color: var(--muted); }
+.yt input[type="text"] { width: 100%; }
+progress { width: 100%; margin-top: 8px; }
+.status { margin-top: 6px; font-size: 13px; }
+.status.error { color: var(--danger); }
