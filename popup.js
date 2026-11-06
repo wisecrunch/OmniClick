@@ -36,30 +36,34 @@
   }
   // ---- Tab recorder panel ----
   const btn = document.getElementById('recBtn');
+  const pauseBtn = document.getElementById('pauseBtn');
   const status = document.getElementById('recStatus');
-  const optAudio = document.getElementById('optAudio');
-  const optPointer = document.getElementById('optPointer');
-  const optKeys = document.getElementById('optKeys');
+  const checks = {
+    audio: document.getElementById('optAudio'), pointer: document.getElementById('optPointer'),
+    keys: document.getElementById('optKeys'), mic: document.getElementById('optMic'),
+    allSites: document.getElementById('optAllSites'),
+  };
   let timer = null;
 
-  const { recOpts = { audio: true, pointer: true, keys: true } } = await chrome.storage.local.get('recOpts');
-  optAudio.checked = recOpts.audio;
-  optPointer.checked = recOpts.pointer;
-  optKeys.checked = recOpts.keys;
-  const readOpts = () => ({ audio: optAudio.checked, pointer: optPointer.checked, keys: optKeys.checked });
-  [optAudio, optPointer, optKeys].forEach((o) => o.addEventListener('change', () => chrome.storage.local.set({ recOpts: readOpts() })));
+  const { recOpts = {} } = await chrome.storage.local.get('recOpts');
+  const saved = { audio: true, pointer: true, keys: true, mic: false, allSites: false, ...recOpts };
+  for (const [k, input] of Object.entries(checks)) input.checked = saved[k];
+  const readOpts = () => Object.fromEntries(Object.entries(checks).map(([k, input]) => [k, input.checked]));
+  Object.values(checks).forEach((o) => o.addEventListener('change', () => chrome.storage.local.set({ recOpts: readOpts() })));
 
   async function refreshRec() {
     const { rec } = await chrome.storage.session.get('rec');
     clearInterval(timer);
-    [optAudio, optPointer, optKeys].forEach((o) => { o.disabled = !!rec; });
+    Object.values(checks).forEach((o) => { o.disabled = !!rec; });
+    pauseBtn.hidden = !rec;
     if (rec) {
       btn.textContent = 'Stop and save';
       btn.classList.add('recording');
+      pauseBtn.textContent = rec.paused ? 'Resume' : 'Pause';
       const tick = () => {
-        const s = Math.floor((Date.now() - rec.startedAt) / 1000);
+        const s = Math.max(0, Math.floor(((rec.pausedSince || Date.now()) - rec.startedAt - rec.pausedMs) / 1000));
         status.classList.remove('error');
-        status.textContent = `Recording… ${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
+        status.textContent = `${rec.paused ? 'Paused' : 'Recording…'} ${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
       };
       tick();
       timer = setInterval(tick, 1000);
@@ -67,8 +71,23 @@
       btn.textContent = 'Start recording';
       btn.classList.remove('recording');
     }
-    return !!rec;
+    return rec || null;
   }
+
+  const fail = (text) => {
+    status.textContent = text;
+    status.classList.add('error');
+  };
+
+  pauseBtn.addEventListener('click', async () => {
+    const rec = await refreshRec();
+    if (!rec) return;
+    pauseBtn.disabled = true;
+    const res = await chrome.runtime.sendMessage({ type: rec.paused ? 'rec-resume' : 'rec-pause' });
+    pauseBtn.disabled = false;
+    if (res && res.ok) await refreshRec();
+    else fail((res && res.error) || 'Could not change recording state.');
+  });
 
   btn.addEventListener('click', async () => {
     btn.disabled = true;
@@ -77,17 +96,25 @@
       window.close();
       return;
     }
-    // Lets the cursor/typing overlay survive page navigation; recording works without it.
-    // Must be requested straight from the click.
-    await chrome.permissions.request({ origins: ['<all_urls>'] }).catch(() => false);
+    const opts = readOpts();
+    // Permission prompts must be requested straight from the click.
+    if (opts.allSites) await chrome.permissions.request({ origins: ['<all_urls>'] }).catch(() => false);
+    if (opts.mic) {
+      const perm = await navigator.permissions.query({ name: 'microphone' }).catch(() => null);
+      if (!perm || perm.state !== 'granted') {
+        chrome.tabs.create({ url: chrome.runtime.getURL('mic.html') });
+        btn.disabled = false;
+        fail('Allow the microphone in the tab that just opened, then start again.');
+        return;
+      }
+    }
     const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
-    const res = await chrome.runtime.sendMessage({ type: 'rec-start', tabId: tab.id, opts: readOpts() });
+    const res = await chrome.runtime.sendMessage({ type: 'rec-start', tabId: tab.id, opts });
     if (res && res.ok) {
       window.close();
     } else {
       btn.disabled = false;
-      status.textContent = (res && res.error) || 'Could not start recording.';
-      status.classList.add('error');
+      fail((res && res.error) || 'Could not start recording.');
     }
   });
 

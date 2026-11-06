@@ -20,6 +20,12 @@ function buildCard(rec) {
   const url = URL.createObjectURL(rec.blob);
   const card = el('div', { className: 'card' + (rec.id === selectedId ? ' selected' : '') });
   const video = el('video', { src: url, controls: true, preload: 'metadata' });
+  // WebM from MediaRecorder has no duration; seeking to the end once makes the browser compute it.
+  video.addEventListener('loadedmetadata', () => {
+    if (video.duration !== Infinity) return;
+    video.currentTime = 1e101;
+    video.addEventListener('timeupdate', () => { video.currentTime = 0; }, { once: true });
+  });
   const meta = el('div', { className: 'meta' },
     el('span', { textContent: new Date(rec.createdAt).toLocaleString() }),
     el('span', { textContent: fmtDur(rec.duration) }),
@@ -80,7 +86,21 @@ function buildCard(rec) {
   return card;
 }
 
+// Recordings that never finished (crash or power loss) still have their chunks on disk; turn them into recordings.
+async function recoverOrphans() {
+  const { rec } = await chrome.storage.session.get('rec');
+  for (const rid of await OmniDB.orphanIds()) {
+    if (rec && rec.rid === rid) continue;
+    const parts = await OmniDB.chunks(rid);
+    if (!parts.length) continue;
+    const blob = new Blob(parts.map((p) => p.blob), { type: parts[0].mime });
+    await OmniDB.put({ id: rid, mime: parts[0].mime, size: blob.size, createdAt: parts[0].startedAt, duration: parts.length, blob, recovered: true });
+    await OmniDB.deleteChunks(rid);
+  }
+}
+
 async function render() {
+  await recoverOrphans().catch(() => {});
   const all = (await OmniDB.all()).sort((a, b) => b.createdAt - a.createdAt);
   listEl.replaceChildren(...all.map(buildCard));
   document.getElementById('empty').hidden = all.length > 0;

@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "OmniClick",
-  "version": "2.4.0",
+  "version": "2.5.0",
   "description": "Gmail notes, saved label/search tabs and inline audio, plus a tab video recorder with YouTube upload. Optional Google Drive note sync.",
   "permissions": [
     "storage",
@@ -15,6 +15,12 @@
   "optional_host_permissions": [
     "<all_urls>"
   ],
+  "commands": {
+    "toggle-recording": {
+      "suggested_key": { "default": "Alt+Shift+R" },
+      "description": "Start or stop the tab recorder"
+    }
+  },
   "action": {
     "default_title": "OmniClick",
     "default_popup": "popup.html",

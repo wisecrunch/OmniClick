@@ -31,3 +31,5 @@ h2 { margin: 0 0 6px; font-size: 13px; font-weight: 500; }
 #recBtn.recording { background: var(--rec); }
 #recBtn:disabled { opacity: .6; cursor: default; }
 #recStatus.error { color: var(--rec); }
+#pauseBtn { width: 100%; margin: 0 0 4px; padding: 7px; border: 1px solid var(--line); border-radius: 6px; background: var(--bg); color: var(--fg); font: 500 13px Roboto, Arial, sans-serif; cursor: pointer; }
+#pauseBtn[hidden] { display: none; }

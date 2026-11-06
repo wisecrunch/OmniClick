@@ -28,3 +28,6 @@
   position: fixed; right: 16px; bottom: 16px; z-index: 2147483000; margin: 0;
   background: #fff; box-shadow: 0 2px 10px rgba(0,0,0,.3);
 }
+.gap-player .gap-tool { flex: none; border: 0; background: none; padding: 2px 4px; cursor: pointer; font: 500 12px Roboto, Arial, sans-serif; color: #5f6368; text-decoration: none; }
+.gap-player .gap-tool:hover { color: #1a73e8; }
+.gap-player:focus-visible { outline: 2px solid #1a73e8; }

@@ -1,4 +1,4 @@
-# OmniClick 2.3.0
+# OmniClick 2.5.0
 
 A toolbox of small click-saving features for Chrome, currently focused on Gmail.
 
@@ -148,8 +148,24 @@ mailbox isolation, redraws, and cleanup without accessing your browser profile.
 
 ## Tab recorder
 
-Enable **Tab recorder** in the popup, then press **Start recording** to record the current tab as
-MP4 (WebM if the browser can't encode MP4). The cursor, clicks, clicked links/buttons and typed keys
-(passwords masked) are drawn into the video. Recordings are kept in the browser and listed on the
-recordings page, where they can be downloaded or uploaded to YouTube using your own Google OAuth
-Web-application client ID (setup steps are on that page).
+Enable **Tab recorder** in the popup, then press **Start recording** (or **Alt+Shift+R**, remappable at
+`chrome://extensions/shortcuts`) to record the current tab as MP4 (WebM if the browser can't encode MP4).
+The cursor, clicks, clicked links/buttons and typed keys (passwords masked) are drawn into the video.
+Optional tab audio and microphone narration are mixed into one track, and recordings can be paused.
+
+- Chunks are written to IndexedDB while recording, so long recordings don't sit in memory. Recording
+  stops after 2 hours or when free disk space drops below ~200 MB. Unfinished recordings (browser crash)
+  are recovered when the recordings page opens.
+- The overlay uses `activeTab` + `scripting`. All-sites access is optional and only requested when
+  "Keep overlay after moving to other sites" is ticked.
+- Recordings are kept in the browser and listed on the recordings page, where they can be downloaded or
+  uploaded to YouTube using your own Google OAuth Web-application client ID (setup steps are on that page).
+
+## Gmail audio player
+
+Plays `.mp3 .wav .m4a .aac .ogg .opus .flac` attachments from opened emails, inbox-list chips and Gmail's
+preview, with speed, save and keyboard controls. GSM 6.10 WAVs (phone recordings) are decoded in `gsm.js`.
+
+## Unit tests
+
+`node --test tests/units.test.js` covers the GSM decoder, note validation/keys and tab storage.

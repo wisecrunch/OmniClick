@@ -1,18 +1,32 @@
 (() => {
-  const AUDIO_RE = /\.(mp3|wav)$/i;
+  const AUDIO_RE = /\.(mp3|wav|m4a|aac|ogg|oga|opus|flac)$/i;
+  const EXT_TYPES = { mp3: 'audio/mpeg', wav: 'audio/wav', m4a: 'audio/mp4', aac: 'audio/aac', ogg: 'audio/ogg', oga: 'audio/ogg', opus: 'audio/ogg', flac: 'audio/flac' };
+  const SPEEDS = [1, 1.25, 1.5, 2, 0.75];
   const ENTITIES = { '&amp;': '&', '&lt;': '<', '&gt;': '>', '&quot;': '"', '&#39;': "'" };
 
   const account = () => (location.pathname.match(/^\/mail\/u\/\d+/) || ['/mail/u/0'])[0];
 
+  // Picks the MIME type from the file's magic bytes, falling back to its extension.
+  function sniffType(buf, name) {
+    const b = new Uint8Array(buf, 0, Math.min(12, buf.byteLength));
+    const str = (o, n) => String.fromCharCode(...b.slice(o, o + n));
+    if (str(0, 4) === 'RIFF') return 'audio/wav';
+    if (str(0, 4) === 'OggS') return 'audio/ogg';
+    if (str(0, 4) === 'fLaC') return 'audio/flac';
+    if (str(4, 4) === 'ftyp') return 'audio/mp4';
+    if (b[0] === 0xff && (b[1] & 0xf6) === 0xf0) return 'audio/aac';
+    if (str(0, 3) === 'ID3' || (b[0] === 0xff && (b[1] & 0xe0) === 0xe0)) return 'audio/mpeg';
+    const ext = ((name || '').match(/\.(\w+)$/) || [])[1];
+    return EXT_TYPES[(ext || '').toLowerCase()] || 'audio/mpeg';
+  }
+
   // Fetches an attachment and returns a blob URL Chrome can play. GSM-in-WAV is decoded to PCM.
-  async function toBlobUrl(url) {
+  async function toBlobUrl(url, name) {
     const resp = await fetch(url, { credentials: 'include' });
     if (!resp.ok) throw new Error('HTTP ' + resp.status);
     const buf = await resp.arrayBuffer();
     const pcm = GapGsm.toPcmWav(buf);
-    const isRiff = new Uint8Array(buf, 0, 4).join() === '82,73,70,70';
-    const type = pcm || isRiff ? 'audio/wav' : 'audio/mpeg';
-    return URL.createObjectURL(new Blob([pcm || buf], { type }));
+    return URL.createObjectURL(new Blob([pcm || buf], { type: pcm ? 'audio/wav' : sniffType(buf, name) }));
   }
 
   let active = false;
@@ -44,7 +58,35 @@
       if (onClose) onClose();
       if (current && current.wrap === wrap) current = null;
     });
-    wrap.append(label, audio, close);
+    const speed = document.createElement('button');
+    speed.className = 'gap-tool';
+    speed.textContent = '1x';
+    speed.title = 'Playback speed';
+    speed.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const next = SPEEDS[(SPEEDS.indexOf(audio.playbackRate) + 1) % SPEEDS.length];
+      audio.playbackRate = next;
+      speed.textContent = next + 'x';
+    });
+    const save = document.createElement('a');
+    save.className = 'gap-tool';
+    save.textContent = '⬇';
+    save.title = 'Save a copy';
+    save.href = blobUrl;
+    save.download = name;
+    save.addEventListener('click', (e) => e.stopPropagation());
+    // Keep Gmail's single-key shortcuts from firing while the player has focus.
+    wrap.tabIndex = 0;
+    wrap.addEventListener('keydown', (e) => {
+      e.stopPropagation();
+      if (e.target !== wrap) return;
+      if (e.key === 'ArrowLeft') audio.currentTime = Math.max(0, audio.currentTime - 5);
+      else if (e.key === 'ArrowRight') audio.currentTime += 5;
+      else if (e.key === ' ') audio.paused ? audio.play() : audio.pause();
+      else return;
+      e.preventDefault();
+    });
+    wrap.append(label, audio, speed, save, close);
     return { wrap, audio };
   }
 
@@ -89,7 +131,7 @@
         return;
       }
       withLoading(btn, '▶ Play', async () => {
-        const p = buildPlayer(info.name, await toBlobUrl(info.url), () => { card._gapPlayer = null; });
+        const p = buildPlayer(info.name, await toBlobUrl(info.url, info.name), () => { card._gapPlayer = null; });
         (card.parentElement || card).after(p.wrap);
         card._gapPlayer = p;
         stopCurrent();
@@ -152,7 +194,7 @@
       e.stopPropagation();
       withLoading(btn, null, async () => {
         const url = await resolveChipUrl(chip);
-        const p = buildPlayer(chip.title, await toBlobUrl(url));
+        const p = buildPlayer(chip.title, await toBlobUrl(url, chip.title));
         p.wrap.classList.add('gap-floating');
         document.querySelectorAll('.gap-floating .gap-close').forEach((c) => c.click());
         document.body.appendChild(p.wrap);

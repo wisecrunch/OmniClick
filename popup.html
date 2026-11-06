@@ -14,9 +14,13 @@
     <label class="opt"><input type="checkbox" id="optAudio"> Record tab audio</label>
     <label class="opt"><input type="checkbox" id="optPointer"> Show cursor and clicks</label>
     <label class="opt"><input type="checkbox" id="optKeys"> Show typed keys (passwords are masked)</label>
+    <label class="opt"><input type="checkbox" id="optMic"> Narrate with microphone</label>
+    <label class="opt"><input type="checkbox" id="optAllSites"> Keep overlay after moving to other sites (asks for all-sites access)</label>
     <button id="recBtn" type="button">Start recording</button>
+    <button id="pauseBtn" type="button" hidden>Pause</button>
     <div id="recStatus" class="hint" role="status"></div>
     <a id="openRecs" href="#">Open recordings</a>
+    <div class="hint">Shortcut: Alt+Shift+R to start or stop (change it at chrome://extensions/shortcuts).</div>
   </section>
   <button id="manage-notes" type="button">Search / back up notes</button>
   <button id="drive-settings" type="button">Google Drive sync</button>
